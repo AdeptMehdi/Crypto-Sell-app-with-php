@@ -64,6 +64,276 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="shortcut icon" href="img/favicon.png" type="image/png">
     <style>
+        /* New header styles */
+        header {
+            background: linear-gradient(to right, #ffffff, #f8f9ff);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+        
+        header .container {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        header .logo {
+            display: flex;
+            align-items: center;
+            z-index: 101;
+        }
+        
+        header .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3861fb, #6b4bff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: all 0.3s ease;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+        
+        header .logo h1::before {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, rgba(56, 97, 251, 0.15), rgba(107, 75, 255, 0.15));
+            border-radius: 50%;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+        
+        header nav {
+            margin-left: auto;
+            margin-right: 30px;
+            transition: all 0.4s ease;
+        }
+        
+        header nav ul {
+            display: flex;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            position: relative;
+            list-style: none;
+        }
+        
+        header nav ul li a {
+            display: block;
+            padding: 10px 16px;
+            color: #333;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header nav ul li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(to right, #3861fb, #6b4bff);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+            z-index: -1;
+        }
+        
+        header nav ul li a:hover {
+            color: #3861fb;
+        }
+        
+        header nav ul li a:hover::before {
+            width: 70%;
+        }
+        
+        header nav ul li.active a::before {
+            width: 70%;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 101;
+        }
+        
+        .btn-login {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1.5px solid #3861fb;
+            color: #3861fb;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+        
+        .btn-login:hover {
+            background: rgba(56, 97, 251, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .btn-register {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #3861fb, #6b4bff);
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(56, 97, 251, 0.25);
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 97, 251, 0.3);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            z-index: 101;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(56, 97, 251, 0.08);
+            position: relative;
+        }
+        
+        .mobile-menu-btn:hover {
+            background: rgba(56, 97, 251, 0.15);
+            color: #3861fb;
+        }
+        
+        /* Responsive header */
+        @media (max-width: 991px) {
+            header nav {
+                margin-right: 20px;
+            }
+            
+            header nav ul li a {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+            
+            .btn-login, .btn-register {
+                padding: 7px 15px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 0;
+            }
+            
+            header .container {
+                padding: 15px 20px;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 15px;
+            }
+            
+            header nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                z-index: 100;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: translateX(-100%);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+            
+            header nav.show {
+                transform: translateX(0);
+            }
+            
+            header nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+                padding-top: 80px;
+            }
+            
+            header nav ul li {
+                width: 100%;
+                text-align: center;
+            }
+            
+            header nav ul li a {
+                padding: 12px 25px;
+                font-size: 1.2rem;
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+            
+            header nav ul li a:hover::before {
+                width: 50%;
+            }
+            
+            .auth-buttons {
+                gap: 10px;
+            }
+            
+            .btn-login, .btn-register {
+                padding: 7px 12px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .auth-buttons {
+                gap: 5px;
+            }
+            
+            .btn-login, .btn-register {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+        }
+        
         .exchange-container {
             display: flex;
             gap: 30px;
@@ -276,18 +546,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             <div class="logo">
                 <h1>CryptoExchange</h1>
             </div>
-            <nav>
+            <nav id="mainNav">
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="market.php">Market</a></li>
-                    <li><a href="exchange.php">Exchange</a></li>
+                    <li class="active"><a href="exchange.php">Exchange</a></li>
                     <li><a href="wallet.php">Wallet</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
-                <a href="login.php" class="btn btn-login">Login</a>
-                <a href="register.php" class="btn btn-register">Register</a>
+                <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true): ?>
+                    <span class="user-name"><?php echo htmlspecialchars($_SESSION["email"]); ?></span>
+                    <a href="logout.php" class="btn btn-login">Logout</a>
+                <?php else: ?>
+                    <a href="login.php" class="btn btn-login">Login</a>
+                    <a href="register.php" class="btn btn-register">Register</a>
+                <?php endif; ?>
             </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         </div>
     </header>
 
@@ -442,6 +718,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     } else {
                         buyButton.style.display = 'none';
                         sellButton.style.display = 'block';
+                    }
+                });
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mainNav = document.getElementById('mainNav');
+            
+            if (mobileMenuBtn && mainNav) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mainNav.classList.toggle('show');
+                    mobileMenuBtn.textContent = mainNav.classList.contains('show') ? '✕' : '☰';
+                });
+            }
+            
+            // Close menu when clicking on a link
+            const navLinks = document.querySelectorAll('#mainNav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        mainNav.classList.remove('show');
+                        mobileMenuBtn.textContent = '☰';
                     }
                 });
             });

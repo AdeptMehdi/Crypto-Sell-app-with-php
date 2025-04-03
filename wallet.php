@@ -43,6 +43,276 @@ $transactions = array_slice($transactions, 0, 10);
     <link rel="stylesheet" href="css/style.css">
     <link rel="shortcut icon" href="img/favicon.png" type="image/png">
     <style>
+        /* New header styles */
+        header {
+            background: linear-gradient(to right, #ffffff, #f8f9ff);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+        
+        header .container {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        header .logo {
+            display: flex;
+            align-items: center;
+            z-index: 101;
+        }
+        
+        header .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3861fb, #6b4bff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: all 0.3s ease;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+        
+        header .logo h1::before {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, rgba(56, 97, 251, 0.15), rgba(107, 75, 255, 0.15));
+            border-radius: 50%;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+        
+        header nav {
+            margin-left: auto;
+            margin-right: 30px;
+            transition: all 0.4s ease;
+        }
+        
+        header nav ul {
+            display: flex;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            position: relative;
+            list-style: none;
+        }
+        
+        header nav ul li a {
+            display: block;
+            padding: 10px 16px;
+            color: #333;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header nav ul li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(to right, #3861fb, #6b4bff);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+            z-index: -1;
+        }
+        
+        header nav ul li a:hover {
+            color: #3861fb;
+        }
+        
+        header nav ul li a:hover::before {
+            width: 70%;
+        }
+        
+        header nav ul li.active a::before {
+            width: 70%;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 101;
+        }
+        
+        .btn-login {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1.5px solid #3861fb;
+            color: #3861fb;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+        
+        .btn-login:hover {
+            background: rgba(56, 97, 251, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .btn-register {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #3861fb, #6b4bff);
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(56, 97, 251, 0.25);
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 97, 251, 0.3);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            z-index: 101;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(56, 97, 251, 0.08);
+            position: relative;
+        }
+        
+        .mobile-menu-btn:hover {
+            background: rgba(56, 97, 251, 0.15);
+            color: #3861fb;
+        }
+        
+        /* Responsive header */
+        @media (max-width: 991px) {
+            header nav {
+                margin-right: 20px;
+            }
+            
+            header nav ul li a {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+            
+            .btn-login, .btn-register {
+                padding: 7px 15px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 0;
+            }
+            
+            header .container {
+                padding: 15px 20px;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 15px;
+            }
+            
+            header nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                z-index: 100;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: translateX(-100%);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+            
+            header nav.show {
+                transform: translateX(0);
+            }
+            
+            header nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+                padding-top: 80px;
+            }
+            
+            header nav ul li {
+                width: 100%;
+                text-align: center;
+            }
+            
+            header nav ul li a {
+                padding: 12px 25px;
+                font-size: 1.2rem;
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+            
+            header nav ul li a:hover::before {
+                width: 50%;
+            }
+            
+            .auth-buttons {
+                gap: 10px;
+            }
+            
+            .btn-login, .btn-register {
+                padding: 7px 12px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .auth-buttons {
+                gap: 5px;
+            }
+            
+            .btn-login, .btn-register {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+        }
+        
         .wallet-container {
             display: flex;
             gap: 30px;
@@ -61,7 +331,7 @@ $transactions = array_slice($transactions, 0, 10);
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 30px;
         }
         
@@ -73,6 +343,25 @@ $transactions = array_slice($transactions, 0, 10);
             color: #333;
         }
         
+        .wallet-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .wallet-card ul li {
+            margin-bottom: 15px;
+        }
+        
+        .wallet-card ul li a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .wallet-card ul li a:hover {
+            color: #3861fb;
+        }
+        
         .wallet-balance {
             text-align: center;
             padding: 20px 0;
@@ -80,57 +369,92 @@ $transactions = array_slice($transactions, 0, 10);
         
         .balance-label {
             color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
         
         .balance-amount {
-            font-size: 2rem;
-            font-weight: 600;
+            font-size: 2.2rem;
+            font-weight: 700;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         
         .wallet-actions {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
         }
         
         .wallet-btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 4px;
             cursor: pointer;
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            color: #333;
+            border: none;
             font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .wallet-btn:hover {
-            background-color: #eaecef;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         
         .wallet-btn.deposit {
             background-color: #00c853;
             color: white;
-            border-color: #00c853;
         }
         
         .wallet-btn.deposit:hover {
             background-color: #00a844;
+            transform: translateY(-2px);
         }
         
         .wallet-btn.withdraw {
             background-color: #ff3d00;
             color: white;
-            border-color: #ff3d00;
         }
         
         .wallet-btn.withdraw:hover {
             background-color: #dd3500;
+            transform: translateY(-2px);
+        }
+        
+        .tab-container {
+            width: 100%;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            position: relative;
+        }
+        
+        .tab-button.active {
+            color: #3861fb;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #3861fb;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         .portfolio-table, .transaction-table {
@@ -155,98 +479,27 @@ $transactions = array_slice($transactions, 0, 10);
             align-items: center;
         }
         
-        .coin-name {
-            font-weight: 500;
-        }
-        
-        .coin-symbol {
-            color: #666;
-            margin-left: 5px;
-        }
-        
         .transaction-type {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 3px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: 500;
-            font-size: 0.8rem;
+            text-transform: uppercase;
         }
         
         .transaction-buy {
-            background-color: #e6f7ee;
-            color: #00a844;
+            background-color: rgba(0, 200, 83, 0.1);
+            color: #00c853;
         }
         
         .transaction-sell {
-            background-color: #ffebee;
-            color: #dd3500;
+            background-color: rgba(255, 61, 0, 0.1);
+            color: #ff3d00;
         }
         
-        .tab-container {
-            margin-bottom: 20px;
-        }
-        
-        .tab-buttons {
-            display: flex;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .tab-button {
-            padding: 15px 30px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-weight: 500;
-            position: relative;
-            color: #666;
-        }
-        
-        .tab-button.active {
-            color: #3861fb;
-        }
-        
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background-color: #3861fb;
-        }
-        
-        .tab-content {
-            display: none;
-            padding: 20px 0;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .view-all {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            color: #333;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
-        
-        .view-all:hover {
-            background-color: #eaecef;
-        }
-        
-        .user-info {
-            margin-bottom: 10px;
-            color: #666;
-        }
-        
-        .user-name {
-            font-weight: 500;
+        .page-title {
+            margin: 40px 0 10px;
+            font-size: 2rem;
             color: #333;
         }
         
@@ -266,6 +519,7 @@ $transactions = array_slice($transactions, 0, 10);
     <script>
         // Simple JavaScript for tab switching
         document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
             
@@ -291,12 +545,12 @@ $transactions = array_slice($transactions, 0, 10);
             <div class="logo">
                 <h1>CryptoExchange</h1>
             </div>
-            <nav>
+            <nav id="mainNav">
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="market.php">Market</a></li>
                     <li><a href="exchange.php">Exchange</a></li>
-                    <li><a href="wallet.php">Wallet</a></li>
+                    <li class="active"><a href="wallet.php">Wallet</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
@@ -308,6 +562,7 @@ $transactions = array_slice($transactions, 0, 10);
                     <a href="register.php" class="btn btn-register">Register</a>
                 <?php endif; ?>
             </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         </div>
     </header>
 
@@ -441,7 +696,6 @@ $transactions = array_slice($transactions, 0, 10);
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
-                                <a href="#" class="view-all">View All Transactions</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -487,5 +741,31 @@ $transactions = array_slice($transactions, 0, 10);
             </div>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mainNav = document.getElementById('mainNav');
+            
+            if (mobileMenuBtn && mainNav) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mainNav.classList.toggle('show');
+                    mobileMenuBtn.textContent = mainNav.classList.contains('show') ? '✕' : '☰';
+                });
+            }
+            
+            // Close menu when clicking on a link
+            const navLinks = document.querySelectorAll('#mainNav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        mainNav.classList.remove('show');
+                        mobileMenuBtn.textContent = '☰';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html> 
