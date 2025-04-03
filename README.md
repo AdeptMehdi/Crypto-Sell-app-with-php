@@ -1,26 +1,67 @@
-# Cryptocurrency Exchange Website
+# Cryptocurrency Exchange Platform
 
-A simple PHP-based cryptocurrency exchange website with HTML and CSS for frontend styling. This project demonstrates a basic cryptocurrency exchange platform with features like market data display, trading interface, and user authentication.
+A modern PHP-based cryptocurrency exchange platform with responsive design and user authentication. This project demonstrates a full-featured cryptocurrency trading interface with market data visualization, trading functionality, and wallet management.
 
 ## Features
 
-- **Home Page**: Introduction to the exchange with featured cryptocurrencies
-- **Market Page**: Comprehensive listing of cryptocurrencies with market data
-- **Exchange Page**: Interface for buying and selling cryptocurrencies
-- **User Authentication**: Login and registration system
-- **Responsive Design**: Mobile-friendly layout that works on all devices
+- **User Authentication**: Secure login and registration system
+- **Market Overview**: Real-time cryptocurrency prices and market data
+- **Trading Interface**: Buy and sell cryptocurrencies with live pricing
+- **Wallet Management**: Track portfolio value and transaction history
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Intuitive UI**: Modern and user-friendly interface
+
+## Screenshots
+
+![Dashboard Screenshot](screenshots/dashboard.png)
+![Market View Screenshot](screenshots/market.png)
+![Trading Interface Screenshot](screenshots/exchange.png)
 
 ## Requirements
 
 - PHP 7.4 or higher
-- Web server (Apache, Nginx, etc.)
-- Basic knowledge of PHP, HTML, and CSS
+- MySQL 5.7 or higher
+- XAMPP, WAMP, LAMP, or any PHP development environment
+- Web browser (Chrome, Firefox, Safari, etc.)
 
 ## Installation
 
-1. Clone or download this repository to your web server directory
-2. Make sure your web server has PHP support enabled
-3. Navigate to the project directory in your browser
+1. Clone this repository:
+   ```
+   git clone https://github.com/yourusername/crypto-exchange.git
+   ```
+
+2. Move the project to your XAMPP `htdocs` directory:
+   ```
+   mv crypto-exchange /path/to/xampp/htdocs/
+   ```
+
+3. Start XAMPP and ensure Apache and MySQL services are running
+
+4. Create the database:
+   - Open your browser and navigate to `http://localhost/phpmyadmin`
+   - Create a new database named `crypto_exchange`
+   - Import the database structure from `database/crypto_exchange.sql`
+
+5. Configure database connection:
+   - Open `config.php` and update the database credentials if needed:
+     ```php
+     $host = "localhost";
+     $username = "root"; // default XAMPP username
+     $password = ""; // default XAMPP password (empty)
+     $dbname = "crypto_exchange";
+     ```
+
+6. Access the application:
+   - Navigate to `http://localhost/crypto-exchange` in your web browser
+
+## Database Structure
+
+The application uses the following main tables:
+- `users` - User account information
+- `wallets` - User cryptocurrency wallets
+- `transactions` - Transaction history
+- `cryptocurrencies` - Cryptocurrency information and prices
 
 ## Usage
 
@@ -31,35 +72,40 @@ For demonstration purposes, you can use the following credentials to log in:
 - **Email**: user@example.com
 - **Password**: password
 
-### Pages
+### Main Pages
 
-- **Home Page**: `index.php` - The main landing page
-- **Market Page**: `market.php` - View cryptocurrency market data
-- **Exchange Page**: `exchange.php` - Buy and sell cryptocurrencies
+- **Home Page**: `index.php` - Landing page with platform overview
+- **Market Page**: `market.php` - Cryptocurrency market data and prices
+- **Exchange Page**: `exchange.php` - Trading interface for buying/selling
+- **Wallet Page**: `wallet.php` - Portfolio management and balance tracking
 - **Login Page**: `login.php` - User authentication
-- **Register Page**: `register.php` - Create a new account
+- **Register Page**: `register.php` - New account creation
 
-## Implementation Notes
+## Development Notes
 
-- This is a frontend demonstration only. In a real application, you would need to:
+- This application uses mock data for demonstration purposes
+- In a production environment, you would need to:
   - Connect to a cryptocurrency API for real-time market data
-  - Implement a secure database for user accounts and transactions
-  - Add proper payment gateway integration
-  - Implement robust security measures
-  - Add cryptocurrency wallet functionality
+  - Implement proper security measures (input validation, XSS protection, etc.)
+  - Set up proper payment processing
+  - Configure secure session management
 
 ## Customization
 
-You can customize the website by:
+You can customize the platform by:
 
-1. Modifying the CSS in `css/style.css` to change colors, fonts, etc.
-2. Adding more cryptocurrencies to the market data arrays in PHP files
-3. Extending functionality by adding new pages or features
+- Modifying the CSS in `css/style.css` to change the visual theme
+- Adding or removing cryptocurrencies in the PHP data files
+- Extending functionality with additional features
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is free to use for educational purposes.
+This project is available under the MIT License. See the LICENSE file for more information.
 
 ## Disclaimer
 
-This project is for demonstration purposes only and should not be used as-is in a production environment. Real cryptocurrency exchanges require robust security measures, regulatory compliance, and extensive backend infrastructure. 
+This project is for educational purposes only and should not be used as-is in a production environment. Real cryptocurrency exchanges require regulatory compliance, robust security measures, and extensive backend infrastructure. 
