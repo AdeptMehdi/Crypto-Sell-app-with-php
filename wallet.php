@@ -11,15 +11,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 // Get user ID from session
 $user_id = $_SESSION["id"];
 
-// Get user information
-$sql = "SELECT * FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+// Set default user data since we're using mock data
+$user = [
+    "id" => $user_id,
+    "name" => isset($_SESSION["name"]) ? $_SESSION["name"] : "Demo User",
+    "email" => isset($_SESSION["email"]) ? $_SESSION["email"] : "user@example.com",
+    "wallet_balance" => 5000.00
+];
 
-// Get user portfolio
+// Get user portfolio using the mock data function
 $portfolio = get_user_portfolio($conn, $user_id);
 
 // Calculate total portfolio value
@@ -28,16 +28,10 @@ foreach ($portfolio as $asset) {
     $total_portfolio_value += $asset['value_usd'];
 }
 
-// Get user transactions (limited to the most recent 10)
-$sql = "SELECT * FROM transaction_history WHERE user_id = ? ORDER BY transaction_date DESC LIMIT 10";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$transactions = [];
-while($row = $result->fetch_assoc()) {
-    $transactions[] = $row;
-}
+// Get user transactions using the mock data function
+$transactions = get_transaction_history($conn, $user_id);
+// Limit to 10 transactions
+$transactions = array_slice($transactions, 0, 10);
 ?>
 
 <!DOCTYPE html>
@@ -161,12 +155,6 @@ while($row = $result->fetch_assoc()) {
             align-items: center;
         }
         
-        .coin-icon {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
-        
         .coin-name {
             font-weight: 500;
         }
@@ -275,6 +263,27 @@ while($row = $result->fetch_assoc()) {
             margin-bottom: 10px;
         }
     </style>
+    <script>
+        // Simple JavaScript for tab switching
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to current button and content
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <header>
@@ -363,7 +372,6 @@ while($row = $result->fetch_assoc()) {
                                             <tr>
                                                 <td>
                                                     <div class="coin-info">
-                                                        <img src="#" alt="<?php echo htmlspecialchars($asset['crypto_name']); ?>" class="coin-icon">
                                                         <span class="coin-name"><?php echo htmlspecialchars($asset['crypto_name']); ?></span>
                                                         <span class="coin-symbol"><?php echo htmlspecialchars($asset['symbol']); ?></span>
                                                     </div>
@@ -399,10 +407,25 @@ while($row = $result->fetch_assoc()) {
                                     <tbody>
                                         <?php foreach ($transactions as $transaction): ?>
                                             <tr>
-                                                <td><?php echo date('M d, Y H:i', strtotime($transaction['transaction_date'])); ?></td>
                                                 <td>
-                                                    <span class="transaction-type transaction-<?php echo $transaction['type']; ?>">
-                                                        <?php echo ucfirst($transaction['type']); ?>
+                                                <?php 
+                                                    // Check if transaction_date is a valid date string
+                                                    $date_display = "";
+                                                    if (isset($transaction['transaction_date'])) {
+                                                        try {
+                                                            $date_display = date('M d, Y H:i', strtotime($transaction['transaction_date']));
+                                                        } catch (Exception $e) {
+                                                            $date_display = "N/A";
+                                                        }
+                                                    } else {
+                                                        $date_display = "N/A";
+                                                    }
+                                                    echo $date_display;
+                                                ?>
+                                                </td>
+                                                <td>
+                                                    <span class="transaction-type transaction-<?php echo htmlspecialchars($transaction['type']); ?>">
+                                                        <?php echo ucfirst(htmlspecialchars($transaction['type'])); ?>
                                                     </span>
                                                 </td>
                                                 <td>
@@ -464,33 +487,5 @@ while($row = $result->fetch_assoc()) {
             </div>
         </div>
     </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Hide all tab contents
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    // Remove active class from all buttons
-                    tabButtons.forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    
-                    // Add active class to clicked button
-                    this.classList.add('active');
-                    
-                    // Show the corresponding tab content
-                    const tabId = this.dataset.tab;
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-        });
-    </script>
 </body>
 </html> 

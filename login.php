@@ -1,6 +1,11 @@
 <?php
-// Initialize session
-session_start();
+// Include config file
+require_once "config.php";
+
+// Initialize session only if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Check if the user is already logged in
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
@@ -31,24 +36,79 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     
     // Validate credentials
     if(empty($email_err) && empty($password_err)){
-        // In a real application, you would verify against a database
-        // This is just a mock for demonstration
-        if($email === "user@example.com" && $password === "password"){
-            // Password is correct, start a new session
-            session_start();
+        // Prepare a select statement
+        $sql = "SELECT id, name, email, password FROM users WHERE email = ?";
+        
+        if($stmt = $conn->prepare($sql)){
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("s", $param_email);
             
-            // Store data in session variables
-            $_SESSION["loggedin"] = true;
-            $_SESSION["id"] = 1;
-            $_SESSION["email"] = $email;                            
+            // Set parameters
+            $param_email = $email;
             
-            // Redirect user to welcome page
-            header("location: index.php");
-        } else{
-            // Display an error message if credentials are invalid
-            $login_err = "Invalid email or password.";
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                // Store result
+                $stmt->store_result();
+                
+                // Check if email exists, if yes then verify password
+                if($stmt->num_rows == 1){
+                    // Bind result variables
+                    $stmt->bind_result($id, $name, $email, $hashed_password);
+                    
+                    if($stmt->fetch()){
+                        // For demonstration: if the user is "user@example.com", allow "password" as the password
+                        if($email === "user@example.com" && $password === "password"){
+                            // Password is correct
+                            
+                            // Store data in session variables
+                            $_SESSION["loggedin"] = true;
+                            $_SESSION["id"] = $id;
+                            $_SESSION["name"] = $name;
+                            $_SESSION["email"] = $email;                            
+                            
+                            // Redirect user to welcome page
+                            header("location: index.php");
+                            exit;
+                        } 
+                        // Check for user@example.com with wrong password
+                        else if($email === "user@example.com" && $password !== "password"){
+                            // Demo account with wrong password
+                            $login_err = "For the demo account, use password: 'password'";
+                        }
+                        // For normal users, verify with password_verify
+                        else if(password_verify($password, $hashed_password)){
+                            // Password is correct
+                            
+                            // Store data in session variables
+                            $_SESSION["loggedin"] = true;
+                            $_SESSION["id"] = $id;
+                            $_SESSION["name"] = $name;
+                            $_SESSION["email"] = $email;                            
+                            
+                            // Redirect user to welcome page
+                            header("location: index.php");
+                            exit;
+                        } else{
+                            // Password is not valid, display a generic error message
+                            $login_err = "Invalid username or password.";
+                        }
+                    }
+                } else{
+                    // Email doesn't exist, display a generic error message
+                    $login_err = "Invalid username or password.";
+                }
+            } else{
+                $login_err = "An error occurred. Please try again later.";
+            }
+
+            // Close statement
+            $stmt->close();
         }
     }
+    
+    // Close connection
+    $conn->close();
 }
 ?>
  
@@ -199,6 +259,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         .facebook-btn {
             background-color: #3b5998;
         }
+
+        /* Debug info */
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -229,7 +300,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <?php 
             if(!empty($login_err)){
                 echo '<div class="alert">' . $login_err . '</div>';
-            }        
+            }
+
+            // Display success message if redirected from registration
+            if(isset($_GET["registered"]) && $_GET["registered"] == "true"){
+                echo '<div class="alert" style="background-color: #e8f5e9; color: #388e3c; border-color: #c8e6c9;">Registration successful. You can now log in.</div>';
+            }
             ?>
 
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -262,6 +338,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <a href="#" class="social-btn google-btn">Google</a>
                     <a href="#" class="social-btn facebook-btn">Facebook</a>
                 </div>
+            </div>
+
+            <!-- Debug information -->
+            <div class="debug-info">
+                <p><strong>Sample Login Details:</strong></p>
+                <p>Email: user@example.com</p>
+                <p>Password: password</p>
             </div>
         </div>
     </main>

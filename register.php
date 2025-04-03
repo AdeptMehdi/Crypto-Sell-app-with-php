@@ -1,6 +1,11 @@
 <?php
-// Initialize session
-session_start();
+// Include config file to get database connection
+require_once "config.php";
+
+// Initialize session only if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Check if the user is already logged in
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
@@ -26,8 +31,33 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(empty(trim($_POST["email"]))){
         $email_err = "Please enter an email.";
     } else{
-        // In a real application, you would check if email already exists in database
-        $email = trim($_POST["email"]);
+        // Prepare a select statement to check if email already exists
+        $sql = "SELECT id FROM users WHERE email = ?";
+        
+        if($stmt = $conn->prepare($sql)){
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("s", $param_email);
+            
+            // Set parameters
+            $param_email = trim($_POST["email"]);
+            
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                // Store result
+                $stmt->store_result();
+                
+                if($stmt->num_rows == 1){
+                    $email_err = "This email is already taken.";
+                } else{
+                    $email = trim($_POST["email"]);
+                }
+            } else{
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+
+            // Close statement
+            $stmt->close();
+        }
     }
     
     // Validate password
@@ -51,13 +81,35 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     
     // Check input errors before inserting in database
     if(empty($name_err) && empty($email_err) && empty($password_err) && empty($confirm_password_err)){
-        // In a real application, you would insert the user into a database
-        // This is a mock success for demonstration
         
-        // Redirect to login page with success message
-        header("location: login.php?registered=true");
-        exit();
+        // Prepare an insert statement (without wallet_balance)
+        $sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+         
+        if($stmt = $conn->prepare($sql)){
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("sss", $param_name, $param_email, $param_password);
+            
+            // Set parameters
+            $param_name = $name;
+            $param_email = $email;
+            $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+            
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                // Redirect to login page with success message
+                header("location: login.php?registered=true");
+                exit();
+            } else{
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+
+            // Close statement
+            $stmt->close();
+        }
     }
+    
+    // Close connection
+    $conn->close();
 }
 ?>
  
