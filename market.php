@@ -1,4 +1,9 @@
 <?php
+// Start session if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // In a real application, this data would be fetched from a cryptocurrency API
 $market_data = [
     [
@@ -54,35 +59,23 @@ $market_data = [
         'symbol' => 'SOL',
         'name' => 'Solana',
         'image' => 'https://assets.coingecko.com/coins/images/4128/large/solana.png',
-        'current_price' => 102.15,
+        'current_price' => 98.75,
         'market_cap' => 32541254125,
         'market_cap_rank' => 5,
-        'price_change_24h' => -2.35,
-        'price_change_percentage_24h' => -2.3,
+        'price_change_24h' => 5.12,
+        'price_change_percentage_24h' => 5.1,
         'volume_24h' => 2541254125,
-    ],
-    [
-        'id' => 'ripple',
-        'symbol' => 'XRP',
-        'name' => 'XRP',
-        'image' => 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png',
-        'current_price' => 0.75,
-        'market_cap' => 28541254125,
-        'market_cap_rank' => 6,
-        'price_change_24h' => 0.015,
-        'price_change_percentage_24h' => 2.0,
-        'volume_24h' => 2141254125,
     ],
     [
         'id' => 'polkadot',
         'symbol' => 'DOT',
         'name' => 'Polkadot',
         'image' => 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
-        'current_price' => 27.85,
-        'market_cap' => 25541254125,
-        'market_cap_rank' => 7,
-        'price_change_24h' => 0.85,
-        'price_change_percentage_24h' => 3.1,
+        'current_price' => 18.42,
+        'market_cap' => 22541254125,
+        'market_cap_rank' => 6,
+        'price_change_24h' => -0.24,
+        'price_change_percentage_24h' => -1.3,
         'volume_24h' => 1541254125,
     ],
     [
@@ -90,587 +83,354 @@ $market_data = [
         'symbol' => 'DOGE',
         'name' => 'Dogecoin',
         'image' => 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png',
-        'current_price' => 0.25,
-        'market_cap' => 20541254125,
-        'market_cap_rank' => 8,
-        'price_change_24h' => -0.005,
-        'price_change_percentage_24h' => -2.1,
-        'volume_24h' => 1341254125,
+        'current_price' => 0.12,
+        'market_cap' => 15541254125,
+        'market_cap_rank' => 7,
+        'price_change_24h' => 0.002,
+        'price_change_percentage_24h' => 1.7,
+        'volume_24h' => 1241254125,
     ],
     [
-        'id' => 'avalanche',
+        'id' => 'avalanche-2',
         'symbol' => 'AVAX',
         'name' => 'Avalanche',
         'image' => 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png',
-        'current_price' => 85.45,
-        'market_cap' => 18541254125,
-        'market_cap_rank' => 9,
-        'price_change_24h' => 2.15,
-        'price_change_percentage_24h' => 2.5,
-        'volume_24h' => 1241254125,
+        'current_price' => 32.45,
+        'market_cap' => 10541254125,
+        'market_cap_rank' => 8,
+        'price_change_24h' => 0.85,
+        'price_change_percentage_24h' => 2.7,
+        'volume_24h' => 841254125,
     ],
     [
         'id' => 'chainlink',
         'symbol' => 'LINK',
         'name' => 'Chainlink',
         'image' => 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
-        'current_price' => 28.75,
-        'market_cap' => 15541254125,
+        'current_price' => 15.82,
+        'market_cap' => 8541254125,
+        'market_cap_rank' => 9,
+        'price_change_24h' => -0.32,
+        'price_change_percentage_24h' => -2.0,
+        'volume_24h' => 741254125,
+    ],
+    [
+        'id' => 'polygon',
+        'symbol' => 'MATIC',
+        'name' => 'Polygon',
+        'image' => 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
+        'current_price' => 0.85,
+        'market_cap' => 7541254125,
         'market_cap_rank' => 10,
-        'price_change_24h' => 0.55,
-        'price_change_percentage_24h' => 1.9,
-        'volume_24h' => 1141254125,
+        'price_change_24h' => 0.02,
+        'price_change_percentage_24h' => 2.4,
+        'volume_24h' => 641254125,
     ],
 ];
 
-// Helper function to format large numbers
+// Helper functions for formatting
 function formatNumber($number) {
     if ($number >= 1000000000) {
-        return '$' . number_format($number / 1000000000, 2) . 'B';
+        return round($number / 1000000000, 2) . 'B';
     } elseif ($number >= 1000000) {
-        return '$' . number_format($number / 1000000, 2) . 'M';
+        return round($number / 1000000, 2) . 'M';
     } elseif ($number >= 1000) {
-        return '$' . number_format($number / 1000, 2) . 'K';
+        return round($number / 1000, 2) . 'K';
     } else {
-        return '$' . number_format($number, 2);
+        return $number;
     }
 }
 
-// Helper function to format price
 function formatPrice($price) {
-    if ($price < 1) {
-        return '$' . number_format($price, 4);
+    if ($price < 0.01) {
+        return number_format($price, 6);
+    } elseif ($price < 1) {
+        return number_format($price, 4);
+    } elseif ($price < 10) {
+        return number_format($price, 2);
     } else {
-        return '$' . number_format($price, 2);
+        return number_format($price, 0);
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Data - CryptoExchange</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="img/favicon.png" type="image/png">
-    <style>
-        /* New header styles */
-        header {
-            background: linear-gradient(to right, #ffffff, #f8f9ff);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            padding: 0;
-            transition: all 0.3s ease;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'gradient': 'gradient 8s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                    },
+                },
+            },
         }
-        
-        header .container {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
-        
-        header .logo {
-            display: flex;
-            align-items: center;
-            z-index: 101;
-        }
-        
-        header .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #3861fb, #6b4bff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            transition: all 0.3s ease;
-            letter-spacing: -0.5px;
-            position: relative;
-        }
-        
-        header .logo h1::before {
-            content: '';
-            position: absolute;
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, rgba(56, 97, 251, 0.15), rgba(107, 75, 255, 0.15));
-            border-radius: 50%;
-            left: -10px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: -1;
-        }
-        
-        header nav {
-            margin-left: auto;
-            margin-right: 30px;
-            transition: all 0.4s ease;
-        }
-        
-        header nav ul {
-            display: flex;
-            gap: 10px;
-            margin: 0;
-            padding: 0;
-        }
-        
-        header nav ul li {
-            position: relative;
-            list-style: none;
-        }
-        
-        header nav ul li a {
-            display: block;
-            padding: 10px 16px;
-            color: #333;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        header nav ul li a::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 3px;
-            background: linear-gradient(to right, #3861fb, #6b4bff);
-            transition: width 0.3s ease;
-            border-radius: 3px;
-            z-index: -1;
-        }
-        
-        header nav ul li a:hover {
-            color: #3861fb;
-        }
-        
-        header nav ul li a:hover::before {
-            width: 70%;
-        }
-        
-        header nav ul li.active a::before {
-            width: 70%;
-        }
-        
-        .auth-buttons {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 101;
-        }
-        
-        .btn-login {
-            padding: 8px 20px;
-            border-radius: 30px;
-            border: 1.5px solid #3861fb;
-            color: #3861fb;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            background: transparent;
-        }
-        
-        .btn-login:hover {
-            background: rgba(56, 97, 251, 0.08);
-            transform: translateY(-2px);
-        }
-        
-        .btn-register {
-            padding: 8px 20px;
-            border-radius: 30px;
-            border: none;
-            background: linear-gradient(135deg, #3861fb, #6b4bff);
-            color: white;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(56, 97, 251, 0.25);
-        }
-        
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(56, 97, 251, 0.3);
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #333;
-            z-index: 101;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            background: rgba(56, 97, 251, 0.08);
-            position: relative;
-        }
-        
-        .mobile-menu-btn:hover {
-            background: rgba(56, 97, 251, 0.15);
-            color: #3861fb;
-        }
-        
-        /* Responsive header */
-        @media (max-width: 991px) {
-            header nav {
-                margin-right: 20px;
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-gradient {
+                @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500;
             }
-            
-            header nav ul li a {
-                padding: 10px 12px;
-                font-size: 0.95rem;
+            .bg-gradient {
+                @apply bg-gradient-to-r from-purple-600 to-blue-500;
             }
-            
-            .btn-login, .btn-register {
-                padding: 7px 15px;
-                font-size: 0.95rem;
+            .animated-bg {
+                background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+                background-size: 400% 400%;
+                animation: gradientBG 15s ease infinite;
             }
-        }
-        
-        @media (max-width: 768px) {
-            header {
-                padding: 0;
+            @keyframes gradientBG {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
             }
-            
-            header .container {
-                padding: 15px 20px;
+            .particle {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                animation: float 6s ease-in-out infinite;
             }
-            
-            .mobile-menu-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-left: 15px;
-            }
-            
-            header nav {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100vh;
-                background: rgba(255, 255, 255, 0.98);
-                z-index: 100;
-                margin: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transform: translateX(-100%);
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-            }
-            
-            header nav.show {
-                transform: translateX(0);
-            }
-            
-            header nav ul {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-                padding-top: 80px;
-            }
-            
-            header nav ul li {
-                width: 100%;
-                text-align: center;
-            }
-            
-            header nav ul li a {
-                padding: 12px 25px;
-                font-size: 1.2rem;
-                width: 100%;
-                max-width: 200px;
-                margin: 0 auto;
-            }
-            
-            header nav ul li a:hover::before {
-                width: 50%;
-            }
-            
-            .auth-buttons {
-                gap: 10px;
-            }
-            
-            .btn-login, .btn-register {
-                padding: 7px 12px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            header .logo h1 {
-                font-size: 1.5rem;
-            }
-            
-            .auth-buttons {
-                gap: 5px;
-            }
-            
-            .btn-login, .btn-register {
-                padding: 6px 10px;
-                font-size: 0.85rem;
-            }
-        }
-        
-        .market-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin: 40px 0;
-        }
-
-        .market-table th, .market-table td {
-            padding: 15px 20px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .market-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #666;
-        }
-
-        .market-table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .coin-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .coin-icon {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
-
-        .coin-name {
-            font-weight: 500;
-        }
-
-        .coin-symbol {
-            color: #666;
-            margin-left: 5px;
-        }
-
-        .positive {
-            color: #00c853;
-        }
-
-        .negative {
-            color: #ff3d00;
-        }
-
-        .market-filters {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 300px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .search-bar:focus {
-            border-color: #3861fb;
-            box-shadow: 0 0 0 2px rgba(56, 97, 251, 0.1);
-        }
-
-        .sort-options {
-            display: flex;
-            gap: 10px;
-        }
-
-        .sort-btn {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            background-color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .sort-btn:hover, .sort-btn.active {
-            background-color: #3861fb;
-            color: white;
-            border-color: #3861fb;
-        }
-
-        .page-title {
-            margin: 40px 0 20px;
-            font-size: 2rem;
-            color: #222;
-        }
-
-        .page-subtitle {
-            color: #666;
-            margin-bottom: 30px;
         }
     </style>
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1>CryptoExchange</h1>
+<body class="bg-gray-900 text-white font-sans">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-gray-900/80 backdrop-blur-lg border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <img src="CryptoExchange_logo.png" alt="CryptoExchange Logo" class="h-8 w-auto">
+                    <span class="ml-2 text-xl font-bold text-gradient">CryptoExchange</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.php" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="market.php" class="bg-purple-500/20 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Market</a>
+                        <a href="exchange.php" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Exchange</a>
+                        <a href="wallet.php" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Wallet</a>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true): ?>
+                        <a href="logout.php" class="text-gray-300 hover:text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
+                        <span class="text-gray-300 px-4 py-2 rounded-md text-sm font-medium"><?php echo htmlspecialchars($_SESSION["name"]); ?></span>
+                    <?php else: ?>
+                        <a href="login.php" class="text-gray-300 hover:text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Login</a>
+                        <a href="register.php" class="bg-gradient text-white px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity">Register</a>
+                    <?php endif; ?>
+                </div>
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-400 hover:text-white focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <nav id="mainNav">
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <li class="active"><a href="market.php">Market</a></li>
-                    <li><a href="exchange.php">Exchange</a></li>
-                    <li><a href="wallet.php">Wallet</a></li>
-                </ul>
-            </nav>
-            <div class="auth-buttons">
-                <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true): ?>
-                    <span class="user-name"><?php echo htmlspecialchars($_SESSION["email"]); ?></span>
-                    <a href="logout.php" class="btn btn-login">Logout</a>
-                <?php else: ?>
-                    <a href="login.php" class="btn btn-login">Login</a>
-                    <a href="register.php" class="btn btn-register">Register</a>
-                <?php endif; ?>
-            </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         </div>
-    </header>
+    </nav>
 
-    <main class="container">
-        <h1 class="page-title">Cryptocurrency Market</h1>
-        <p class="page-subtitle">Track and analyze digital currencies in real-time.</p>
+    <!-- Market Section with Animated Background -->
+    <section class="pt-32 pb-20 relative overflow-hidden animated-bg">
+        <!-- Animated Particles -->
+        <div id="particles" class="absolute inset-0 overflow-hidden"></div>
         
-        <div class="market-filters">
-            <input type="text" class="search-bar" placeholder="Search for a cryptocurrency...">
-            <div class="sort-options">
-                <button class="sort-btn active">Market Cap</button>
-                <button class="sort-btn">Volume</button>
-                <button class="sort-btn">Price Change</button>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-gradient animate-gradient">
+                    Cryptocurrency Market
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                    Real-time cryptocurrency prices, market caps, and trading volumes. Stay updated with the latest market trends.
+                </p>
+            </div>
+            
+            <!-- Market Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors">
+                    <div class="text-4xl font-bold text-purple-500 mb-2">$4.2B+</div>
+                    <div class="text-gray-400">24h Trading Volume</div>
+                </div>
+                <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors">
+                    <div class="text-4xl font-bold text-purple-500 mb-2">150+</div>
+                    <div class="text-gray-400">Cryptocurrencies</div>
+                </div>
+                <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors">
+                    <div class="text-4xl font-bold text-purple-500 mb-2">$1.8T+</div>
+                    <div class="text-gray-400">Total Market Cap</div>
+                </div>
+            </div>
+            
+            <!-- Market Table -->
+            <div class="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-700">
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">#</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Coin</th>
+                                <th class="px-6 py-4 text-right text-sm font-semibold text-gray-300">Price</th>
+                                <th class="px-6 py-4 text-right text-sm font-semibold text-gray-300">24h %</th>
+                                <th class="px-6 py-4 text-right text-sm font-semibold text-gray-300">Market Cap</th>
+                                <th class="px-6 py-4 text-right text-sm font-semibold text-gray-300">Volume (24h)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($market_data as $index => $coin): ?>
+                                <tr class="border-b border-gray-700 hover:bg-gray-700/50 transition-colors">
+                                    <td class="px-6 py-4 text-gray-400"><?php echo $index + 1; ?></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <img src="<?php echo $coin['image']; ?>" alt="<?php echo $coin['name']; ?>" class="w-8 h-8 mr-3">
+                                            <div>
+                                                <div class="font-medium"><?php echo $coin['name']; ?></div>
+                                                <div class="text-gray-400 text-sm"><?php echo $coin['symbol']; ?></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">$<?php echo formatPrice($coin['current_price']); ?></td>
+                                    <td class="px-6 py-4 text-right <?php echo $coin['price_change_percentage_24h'] >= 0 ? 'text-green-500' : 'text-red-500'; ?>">
+                                        <?php echo $coin['price_change_percentage_24h'] >= 0 ? '+' : ''; ?><?php echo $coin['price_change_percentage_24h']; ?>%
+                                    </td>
+                                    <td class="px-6 py-4 text-right">$<?php echo formatNumber($coin['market_cap']); ?></td>
+                                    <td class="px-6 py-4 text-right">$<?php echo formatNumber($coin['volume_24h']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Market Chart Placeholder -->
+            <div class="mt-12 bg-gray-800/50 p-8 rounded-xl border border-gray-700">
+                <h2 class="text-2xl font-bold mb-6 text-gradient">Market Trends</h2>
+                <div class="h-80 bg-gray-700/30 rounded-lg flex items-center justify-center">
+                    <p class="text-gray-400">Interactive chart would be displayed here</p>
+                </div>
             </div>
         </div>
+    </section>
 
-        <table class="market-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>24h %</th>
-                    <th>Market Cap</th>
-                    <th>Volume (24h)</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($market_data as $coin): ?>
-                    <tr>
-                        <td><?php echo $coin['market_cap_rank']; ?></td>
-                        <td>
-                            <div class="coin-info">
-                                <img src="<?php echo $coin['image']; ?>" alt="<?php echo $coin['name']; ?>" class="coin-icon">
-                                <span class="coin-name"><?php echo $coin['name']; ?></span>
-                                <span class="coin-symbol"><?php echo $coin['symbol']; ?></span>
-                            </div>
-                        </td>
-                        <td><?php echo formatPrice($coin['current_price']); ?></td>
-                        <td class="<?php echo $coin['price_change_percentage_24h'] >= 0 ? 'positive' : 'negative'; ?>">
-                            <?php echo ($coin['price_change_percentage_24h'] >= 0 ? '+' : '') . number_format($coin['price_change_percentage_24h'], 2); ?>%
-                        </td>
-                        <td><?php echo formatNumber($coin['market_cap']); ?></td>
-                        <td><?php echo formatNumber($coin['volume_24h']); ?></td>
-                        <td>
-                            <a href="trade.php?coin=<?php echo $coin['id']; ?>" class="btn btn-primary">Trade</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3>CryptoExchange</h3>
-                    <p>Your trusted partner for cryptocurrency trading.</p>
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="CryptoExchange_logo.png" alt="CryptoExchange Logo" class="h-8 w-auto">
+                        <span class="ml-2 text-xl font-bold text-gradient">CryptoExchange</span>
+                    </div>
+                    <p class="text-gray-400">The most secure and reliable cryptocurrency exchange platform for trading digital assets.</p>
                 </div>
-                <div class="footer-col">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="about.php">About Us</a></li>
-                        <li><a href="fees.php">Fees</a></li>
-                        <li><a href="contact.php">Contact</a></li>
-                        <li><a href="blog.php">Blog</a></li>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
                     </ul>
                 </div>
-                <div class="footer-col">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="terms.php">Terms of Service</a></li>
-                        <li><a href="privacy.php">Privacy Policy</a></li>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Compliance</a></li>
                     </ul>
                 </div>
-                <div class="footer-col">
-                    <h3>Connect With Us</h3>
-                    <div class="social-links">
-                        <a href="#">Twitter</a>
-                        <a href="#">Telegram</a>
-                        <a href="#">Facebook</a>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                            </svg>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="copyright">
-                &copy; <?php echo date('Y'); ?> CryptoExchange. All rights reserved.
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+                <p>&copy; <?php echo date('Y'); ?> CryptoExchange. All rights reserved.</p>
             </div>
         </div>
     </footer>
-    
+
     <script>
-        // Mobile menu toggle
+        // Mobile menu functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mainNav = document.getElementById('mainNav');
+            const mobileMenuButton = document.querySelector('button');
+            const mobileMenu = document.querySelector('.md\\:block');
             
-            if (mobileMenuBtn && mainNav) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    mainNav.classList.toggle('show');
-                    mobileMenuBtn.textContent = mainNav.classList.contains('show') ? '✕' : '☰';
-                });
-            }
-            
-            // Close menu when clicking on a link
-            const navLinks = document.querySelectorAll('#mainNav a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        mainNav.classList.remove('show');
-                        mobileMenuBtn.textContent = '☰';
-                    }
-                });
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
             });
+            
+            // Create animated particles for hero section
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 5px and 20px
+                const size = Math.random() * 15 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation delay
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // Random animation duration
+                particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
         });
     </script>
 </body>

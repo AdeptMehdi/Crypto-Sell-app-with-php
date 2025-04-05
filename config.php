@@ -5,13 +5,22 @@ define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME', 'crypto_exchange');
 
-// Attempt to connect to MySQL database
-$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+// Attempt to connect to MySQL database without selecting a database first
+$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD);
 
 // Check connection
 if($conn === false){
     die("ERROR: Could not connect to database. " . $conn->connect_error);
 }
+
+// Create database if it doesn't exist
+$sql = "CREATE DATABASE IF NOT EXISTS " . DB_NAME;
+if ($conn->query($sql) === FALSE) {
+    die("ERROR: Could not create database. " . $conn->error);
+}
+
+// Select the database
+$conn->select_db(DB_NAME);
 
 // Function to sanitize inputs
 function sanitize_input($data) {
